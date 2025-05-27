@@ -19,6 +19,13 @@ class Database:
         self.cursor.close()
         self.connection.close()
 
+    def query(self, query, params=None):
+        if params:
+            self.cursor.execute(query, params)
+        else:
+            self.cursor.execute(query)
+        return self.cursor.fetchall()
+
     def init_db(self):
         drop_table_query = """
             DROP TABLE IF EXISTS players, teams;
