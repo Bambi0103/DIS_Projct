@@ -10,12 +10,12 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 db = Database(user="bruger", password="password")
 app = Flask(__name__)
 
-@bp.route('/')
+@bp.route('/search')
 def people():
     term = request.args.get("q", "").strip()
     results = db.get_full_names(term)
     # return jsonify([{"full_name": name} for name in results])
-    return "/n".join(f'<option value="{name}"</option>' for name in results)
+    return "".join(f'<option value="{name}">' for name in results)
 
 @app.route('/')
 def index():

@@ -27,7 +27,7 @@ class Database:
         return self.cursor.fetchall()
     
     # Creating a meethod that is able to only select the attribute 'full_name' from the players table
-    def get_full_names(self, term: str, limit: int = 20) -> list[str]:
+    def get_full_names(self, term: str, limit: int = 20000) -> list[str]:
         sql = """
             SELECT DISTINCT full_name FROM players
             WHERE full_name ILIKE %s

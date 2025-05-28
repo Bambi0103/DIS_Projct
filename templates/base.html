@@ -15,12 +15,14 @@
                name="full_name"
                class="search-bar"
                placeholder="Guess the player..."
-               oninput="searchPlayer(this.value)"
+               hx-get="api/search"
+               hx-trigger="input changed delay:500ms"
+               hx-target="#playerList"
                list ="playerList"
-               id="searchInput"
+               id="playerSearch"
                aria-label="Search for a player"
                autocomplete="off"
-               style="width: 50%; padding: 15px; font-size: 18px; border: 2px solid #ccc; border-radius: 5px;" />
+               style="width: 400px; height: 40px; font-size: 16px;"/>
         <datalist id="playerList"></datalist>
     </div>
     </body>
