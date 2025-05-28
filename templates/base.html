@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guess the player</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer> </script>
+</head>
+    <body>
+    <header class="hero">
+        <h1>Guess the player</h1>
+    </header>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+        <input type="search"
+               name="full_name"
+               class="search-bar"
+               placeholder="Guess the player..."
+               oninput="searchPlayer(this.value)"
+               list ="playerList"
+               id="searchInput"
+               aria-label="Search for a player"
+               autocomplete="off"
+               style="width: 50%; padding: 15px; font-size: 18px; border: 2px solid #ccc; border-radius: 5px;" />
+        <datalist id="playerList"></datalist>
+    </div>
+    </body>
+</html> 

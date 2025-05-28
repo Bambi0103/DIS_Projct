@@ -1,0 +1,21 @@
+body{
+    background: url("stadium-181457_1920.jpg") center / cover no-repeat fixed;
+
+}
+
+.hero{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.hero h1{
+    color: #ffffff;
+    font-size: clamor(2.5rem, 3.5vw);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+}

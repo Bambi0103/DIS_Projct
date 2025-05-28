@@ -25,6 +25,16 @@ class Database:
         else:
             self.cursor.execute(query)
         return self.cursor.fetchall()
+    
+    # Creating a meethod that is able to only select the attribute 'full_name' from the players table
+    def get_full_names(self, term: str, limit: int = 20) -> list[str]:
+        sql = """
+            SELECT DISTINCT full_name FROM players
+            WHERE full_name ILIKE %s
+            LIMIT %s;
+        """
+        self.cursor.execute(sql, (f"%{term}%", limit))
+        return [row[0] for row in self.cursor.fetchall()]
 
     def init_db(self):
         drop_table_query = """
@@ -220,5 +230,5 @@ class Database:
         self.connection.commit()
         print("Foreign key relationship created successfully.")
         
-        
+
         
