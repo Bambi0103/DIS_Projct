@@ -1,7 +1,7 @@
 from flask import Flask 
 from flask import render_template
 from flask import Blueprint, request, jsonify
-from src.setup import Database
+from database import Database
 import psycopg2
 import psycopg2.pool
 
@@ -14,7 +14,6 @@ app = Flask(__name__)
 def people():
     term = request.args.get("q", "").strip()
     results = db.get_full_names(term)
-    # return jsonify([{"full_name": name} for name in results])
     return "".join(f'<option value="{name}">' for name in results)
 
 @app.route('/')
@@ -22,8 +21,6 @@ def index():
     return render_template('base.html')
 
 app.register_blueprint(bp)
-
-
 
 
 if __name__ == "__main__":
