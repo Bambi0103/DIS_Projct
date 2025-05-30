@@ -91,7 +91,7 @@ class Database:
         input_file = output_file  # Use the converted file for loading
 
         # Drop existing table if exists and create a new one
-        with open(self.basepath / "../sql/init/init_players.sql", "r", encoding="utf-8") as f:
+        with open(self.basepath / "sql/init/init_players.sql", "r", encoding="utf-8") as f:
             create_table_query = f.read()
             self.cursor.execute(create_table_query)
             self.connection.commit()
@@ -118,20 +118,20 @@ class Database:
         print("Database initialized and data loaded successfully.")
 
         # Remove unnecessary properties
-        with open(self.basepath / "../sql/init/clean_data.sql", "r", encoding="utf-8") as f:
+        with open(self.basepath / "sql/init/clean_data.sql", "r", encoding="utf-8") as f:
             clean_data_query = f.read()
             self.cursor.execute(clean_data_query)
             self.connection.commit()
             print("Unnecessary properties removed successfully.")
 
-        with open(self.basepath / "../sql/init/init_teams_table.sql", "r", encoding="utf-8") as f:
+        with open(self.basepath / "sql/init/init_teams_table.sql", "r", encoding="utf-8") as f:
             init_teams_query = f.read()
             self.cursor.execute(init_teams_query)
             self.connection.commit()
             print("Teams table initialized successfully.")
             print("Foreign key constraints added successfully.")
 
-        with open(self.basepath / "../sql/init/init_users.sql", "r", encoding="utf-8") as f:
+        with open(self.basepath / "sql/init/init_users.sql", "r", encoding="utf-8") as f:
             init_users_query = f.read()
             self.cursor.execute(init_users_query)
             self.connection.commit()

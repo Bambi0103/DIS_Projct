@@ -1,6 +1,6 @@
 from flask import (
     Blueprint, current_app, render_template,
-    request, session, abort, jsonify
+    request, session, abort, jsonify, current_app
 )
 from markupsafe import escape
 from difflib import get_close_matches
@@ -59,6 +59,12 @@ def _evaluate_guess(answer: dict, guess: dict) -> dict:
             result[key] = {
                 "match": val_answer == val_guess
             }
+    if current_app.config["DEBUG_LEVEL"] > 0:
+        return {
+            "guess": guess,
+            "answer": answer,
+            "results": result
+        }
     return result
 
 # ---------------- routes ----------------- #
@@ -122,7 +128,6 @@ def make_guess():
     session["attempts"] += 1
 
     result = _evaluate_guess(target_row, guess_row)
-    print(json.dumps(result, indent=2))
 
     # Optional: if correct, you might clear session to start a new game
     # session.pop("target_player_id", None)

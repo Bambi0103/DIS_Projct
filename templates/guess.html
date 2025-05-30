@@ -41,7 +41,18 @@
     <datalist id="playerList"></datalist>
 
     <!--Where comparison results can be shown-->
-    <div id="results"></div>
+    <div id="results" style="background-color: #ffffff;"></div>
+    <!--Below is GPT implementation for easily copying data for inspection-->
+    <button type="button" onclick="copyResultsToClipboard()" style="margin-top:10px;">Copy Results</button>
+    <script>
+        function copyResultsToClipboard() {
+            const resultsDiv = document.getElementById('results');
+            if (resultsDiv) {
+                const text = resultsDiv.innerText || resultsDiv.textContent;
+                navigator.clipboard.writeText(text);
+            }
+        }
+    </script>
 </div>
 </body>
 </html>
