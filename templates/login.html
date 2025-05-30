@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="text-center">Sign in</h2>
+  <form method="post" class="login-form">
+      <input
+          name="username"
+          placeholder="Username"
+          autofocus
+          required
+      />
+      <button type="submit">Enter</button>
+  </form>
+{% endblock %}

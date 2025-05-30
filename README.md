@@ -11,7 +11,7 @@
 
 ### Manual Setup
 1. Setting up Python venv
-    1. Have Python 3.whatever-works installed
+    1. Have Python 3.\<whatever-works\> installed
     2. Create a virtual environment in the project directory with `python3 -m venv venv` on Linux/Max or `python -m venv venv` on Windows
     3. Activate the virtual environment with `source venv/bin/activate` on Linux/Mac or `venv\Scripts\activate` on Windows
     4. Install the required packages with `pip install -r requirements.txt`
