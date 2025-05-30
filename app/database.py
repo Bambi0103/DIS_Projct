@@ -26,14 +26,45 @@ class Database:
             self.cursor.execute(query)
         return self.cursor.fetchall()
     
-    # Creating a meethod that is able to only select the attribute 'full_name' from the players table
+    # Creating a method that is able to only select the attribute 'full_name' from the players table
     def get_all_player_names(self) -> list[str]:
         query = "SELECT full_name FROM players;"  # or whatever your table/column is
-        with self.cursor as cur:
-            cur.execute(query)
-            results = cur.fetchall()
+        self.cursor.execute(query)
+        results = self.cursor.fetchall()
         return [row[0] for row in results]
-
+    
+    def get_all_player_ids(self) -> list[dict]:
+        query = "SELECT id FROM players;"
+        self.cursor.execute(query)
+        results = self.cursor.fetchall()
+        return [{"id": row[0]} for row in results]
+    
+    def get_random_player(self) -> dict:
+        query = "SELECT * FROM players ORDER BY RANDOM() LIMIT 1;"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if result:
+            columns = [desc[0] for desc in self.cursor.description]
+            return dict(zip(columns, result))
+        return {}
+    
+    def get_players_by_name(self, name: str) -> list[dict]:
+        self.cursor.execute(
+            "SELECT * FROM players WHERE full_name ILIKE %(n)s",
+            {"n": name},
+        )
+        results = self.cursor.fetchall()
+        columns = [desc[0] for desc in self.cursor.description]
+        return [dict(zip(columns, row)) for row in results]
+    
+    def get_player_by_id(self, player_id: int) -> dict:
+        query = "SELECT * FROM players WHERE id = %s;"
+        self.cursor.execute(query, (player_id,))
+        result = self.cursor.fetchone()
+        if result:
+            columns = [desc[0] for desc in self.cursor.description]
+            return dict(zip(columns, result))
+        return {}
 
     def init_db(self):
         # Convert birth_date in CSV from mm/dd/yyyy to yyyy-mm-dd
@@ -93,7 +124,6 @@ class Database:
             self.connection.commit()
             print("Unnecessary properties removed successfully.")
 
-
         with open(self.basepath / "../sql/init/init_teams_table.sql", "r", encoding="utf-8") as f:
             init_teams_query = f.read()
             self.cursor.execute(init_teams_query)
@@ -106,7 +136,3 @@ class Database:
             self.cursor.execute(init_users_query)
             self.connection.commit()
             print("Users table initialized successfully.")
-
-        
-
-        

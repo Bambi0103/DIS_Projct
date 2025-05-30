@@ -4,28 +4,44 @@
     <meta charset="UTF-8">
     <title>Guess the player</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://unpkg.com/htmx.org@1.9.12" defer> </script>
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
 </head>
-    <body>
-    <header class="hero">
-        <h1>Guess the player</h1>
-    </header>
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
-        <input type="search"
-               name="full_name"
-               class="search-bar"
-               placeholder="Guess the player..."
-               hx-get="api/search"
-               hx-trigger="input changed delay:10ms"
-               hx-target="#playerList"
-               list ="playerList"
-               id="playerSearch"
-               aria-label="Search for a player"
-               autocomplete="off"
-               style="width: 400px; height: 40px; font-size: 16px;" />
-        <button class="search-button" hx-get="api/search" hx-target="#playerList" hx-trigger="click">Guess</button>
+<body>
+<header class="hero">
+    <h1>Guess the player</h1>
+</header>
 
-        <datalist id="playerList"></datalist>
-    </div>
-    </body>
-</html> 
+<div style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;">
+    <input type="search"
+           name="full_name"
+           class="search-bar"
+           placeholder="Guess the player..."
+           hx-get="{{ url_for('search.player_search') }}"
+           hx-trigger="input changed delay:10ms"
+           hx-target="#playerList"
+           list="playerList"
+           id="playerSearch"
+           aria-label="Search for a player"
+           autocomplete="off"
+           style="width:400px;height:40px;font-size:16px;"
+           hx-trigger="keyup[key=='Enter']"
+           hx-post="{{ url_for('search.make_guess') }}"
+           hx-include="#playerSearch"
+           hx-target="#results" />
+
+    <button type="button"
+            class="search-button"
+            hx-post="{{ url_for('search.make_guess') }}"
+            hx-include="#playerSearch"
+            hx-trigger="click"
+            hx-target="#results">
+        Guess
+    </button>
+
+    <datalist id="playerList"></datalist>
+
+    <!--Where comparison results can be shown-->
+    <div id="results"></div>
+</div>
+</body>
+</html>
