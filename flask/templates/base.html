@@ -23,6 +23,8 @@
                aria-label="Search for a player"
                autocomplete="off"
                style="width: 400px; height: 40px; font-size: 16px;" />
+        <button class="search-button" hx-get="api/search" hx-target="#playerList" hx-trigger="click">Guess</button>
+
         <datalist id="playerList"></datalist>
     </div>
     </body>
