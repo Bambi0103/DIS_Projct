@@ -5,9 +5,9 @@ from app import create_app
 def main():
     parser = argparse.ArgumentParser(description="Run the 'Guess the Player' Flask app.")
     parser.add_argument("--usr", required=True, help="Database username")
-    parser.add_argument("--pwd", required=True, help="Database password")
+    parser.add_argument("--pwd", required=False, help="Database password")
     parser.add_argument("--host", default="127.0.0.1", help="Host to run on")
-    parser.add_argument("--port", type=int, default=5000, help="Port to run on")
+    parser.add_argument("--port", type=int, default=5324, help="Port to run on")
     parser.add_argument("--no-init", action="store_true", help="Skip calling init_db() on startup")
     parser.add_argument("--debug-level", type=int, default=0, metavar="N", help="Set debug level, higher values show more debug info")
 
@@ -18,3 +18,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

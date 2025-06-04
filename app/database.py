@@ -48,6 +48,7 @@ class Database:
             return dict(zip(columns, result))
         return {}
     
+    
     def get_players_by_name(self, name: str) -> list[dict]:
         self.cursor.execute(
             "SELECT * FROM players WHERE full_name ILIKE %(n)s",
