@@ -6,20 +6,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
 
-    <!----- NEW: lightweight styles for a coloured grid --->
+    <!--Colours for results grid-->
         <style>
-        /* ☐ Horizontal “rail” that can scroll if needed */
+        /* Implemented such that the boxes has horizontal  scroll if needed */
         .result-grid{
             display:flex;
-            flex-wrap:nowrap;         /* stay in a single row            */
-            overflow-x:auto;          /* add scrollbar when overflowing  */
+            flex-wrap:nowrap;         
+            overflow-x:auto;          
             gap:10px;
             margin-top:20px;
-            padding-bottom:4px;       /* leave space for scrollbar track */
+            padding-bottom:4px;       
         }
 
         .result-cell{
-            flex:0 0 140px;           /* fixed-width tiles               */
+            flex:0 0 140px;           
             padding:8px 6px;
             border-radius:6px;
             text-align:center;
@@ -27,14 +27,14 @@
             color:#fff;
             user-select:none;
         }
-        .result-cell small{           /* tiny diff number                */
+        .result-cell small{           
             display:block;
             font-size:0.75rem;
             opacity:.85;
             margin-top:2px;
         }
-        .true  {background:#4caf50;}  /* green  */
-        .false {background:#e53935;}  /* red    */
+        .true  {background:#4caf50;}  
+        .false {background:#e53935;}  
     </style>
 </head>
 <body>
@@ -71,10 +71,10 @@
 
     <datalist id="playerList"></datalist>
 
-    <!--Where comparison results can be shown-->
+    <!--Destination for comparison results-->
     <div id="results"></div>
 
-    <!--Below is GPT implementation for easily copying data for inspection-->
+    <!--Button for copying raw json data from result-->
     <button type="button" onclick="copyResultsToClipboard()" style="margin-top:10px;">Copy Results</button>
     <script>
         /* existing helper */
@@ -86,7 +86,7 @@
             }
         }
 
-        /* --- NEW: turn backend JSON into a coloured grid --- */
+        // Transform JSON into worlde-like grid
         function renderGrid(data) {
             const IGNORE = ['correct'];
             const guess = data.guess || {};
@@ -101,9 +101,9 @@
 
             if (typeof val === 'object' && val !== null && 'match' in val) {
                 cellClass = val.match ? 'true' : 'false';
-                // Show guess value always
+                // Presents the value for the player that has beeen guessed on 
                 cellContent = `<div><b>${key.replace(/_/g, ' ')}:</b> ${guessValue}</div>`;
-                // Show diff only if not matched and diff exists
+                // Show difference only if not matched and if the difference exists
                 if (!val.match && 'diff' in val) {
                 cellContent += `<small>Diff: ${val.diff}</small>`;
                 }
@@ -118,7 +118,7 @@
             return html;
         }
 
-        /* listen for htmx swaps into #results */
+
         document.body.addEventListener('htmx:afterSwap', e=>{
             if(e.detail.target.id !== 'results') return;
             const raw = e.detail.target.innerText.trim();
@@ -126,7 +126,7 @@
                 const data = JSON.parse(raw);
                 e.detail.target.innerHTML = renderGrid(data);
             }catch(err){
-                // not JSON – let ordinary HTML/text pass through
+                
             }
         });
     </script>

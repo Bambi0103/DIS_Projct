@@ -1,33 +1,30 @@
 # DIS_Project
 
 ## Initial Setup
-### Automatic Setup
-- In a terminal run the file `setup.sh` with bash (`bash setup.sh`)
-- This should hopefully:
-    - Create a database either under the default user 'postgres' or your own user (what your terminal is logged in as)
-    - Create a python virtual environment if necessary
-    - Install the required packages in the virtual environment
-    - Run the `setup.py` file to initialise the database with required tables
+Below works as of 05/06/2025 with (but not exclusively) Python version 3.12 
+- Initialise a Python virtual environment (recommended) by running `python -m venv venv` (Windows) or `python3 -m venv venv` on Unix-based systems.
+- Activate the virtual environment by running `venv\Scripts\Activate.bat` in Windows, and `source /Scripts/activate` on Unix-based systems
+- Install required packages by running `pip install -r requirements.txt`. This might break in the future, as we have not specified which versions of the packages (nor Python) are required. 
+- Ensure that PostgreSQL is installed by running `psql --version`. Refer to [this website](https://www.postgresql.org/) for Windows and Linux, and to [this website](https://postgresapp.com/) on MacOS
+- Create the required database by running `psql -c "CREATE DATABASE guesstheplayerdb"`
+- If all above was successful, run the app with `python[3] run.py --usr \<db-username\> \[--pwd \<db-password\>\]
+- You should now be presented with a localhost ip-address (127......) which should present you with the application login screen.
+- The login accepts
+    - Username: mixed-case letters (see shortcomings), numbers, dashes, and underscores of length 3-20 characters
+    - Password: minimum length of 5 characters, must contain at least one special character
 
-### Manual Setup
-1. Setting up Python venv
-    1. Have Python 3.\<whatever-works\> installed
-    2. Create a virtual environment in the project directory with `python3 -m venv venv` on Linux/Max or `python -m venv venv` on Windows
-    3. Activate the virtual environment with `source venv/bin/activate` on Linux/Mac or `venv\Scripts\activate` on Windows
-    4. Install the required packages with `pip install -r requirements.txt`
-2. Setting up PostgreSQL
-    1. Have PostgreSQL installed. To check this, run `psql` and see if something happens. 
-    2. If not installed, follow the instructions in the first slides (administration and info) from Absalon.
-    3. postgreSQL is installed with a default user 'postgres' and a database 'postgres'. You can create your own user and database if you want (NOT YET DESCRIBED HERE).
-3. Setting up the database
-    1. Run the command `psql -U postgres -c "CREATE_DATABASE guesstheplayerdb;"` to create a database called `guesstheplayerdb`. If you are using your own user, replace `postgres` with your username. You will most likely be prompted for a password.
-    2. !CURRENTLY! From the directory DIS_Projct, modify the file `main.py` and add in your database credentials. Then run said file. This should populate the database and start a Flask server on `localhost:<port>` also sometimes shown as `127.0.0.1:<port>`. CLikc on said link to see the web app.
+## Gameplay
+The gameplay is very similar to that of Worlde or Loldle, only here, the one tries to guess a specific football player. When a guess is made, a table/list of attributes is presented where each attribute is marked true or false. If the attribute contains a numerical value, a difference is presented (e.g. -30 would represent that your guess was 30 too low). 
 
-## CURRENTLY WORKING
-- The database contains a table, "players", where one can query a specific player by their full name with suggested players updated after each keystroke. 
+## Features
+- User login with registration (incl. passwords \[unhashed, unsalted, not particularly secure\])
+- Game mode - User can guess on the players
+- Player attributes comparison by color coded boxes
+- Flask backend with PostgreSQL database
+- Uses CSS to define and design the frontend of the application
 
-## To-Dos
-- Setup simple flask (or other Python front-end framework) as a basis and template for future development
-- Set up users' table with appropriate fields in `setup.py`
-- Initialise a report describing the idea (similar to [loldle](https://loldle.net/classic)) (begin typing a name and click a picture to understand)
-- Perhaps begin implementing some python code with logic to handle the queries involved. 
+## Shortcomings
+- The player dataset is outdated by 6 years, so the latest transfers and new players are not included and some stats may be outdated. 
+- When creating a username, Danish characters such as "æ", "ø", and "å" are not allowed, as they are not supported by the login system. Only letters a thorugh z in both uppercase and lowercase-, underscores, and dashes are accepted.
+- Whenever a guess is made, the previous guess results are overwritten (unlike wordle/loldle), so only the latest guess results are visible. 
+

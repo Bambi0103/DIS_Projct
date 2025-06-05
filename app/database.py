@@ -2,7 +2,6 @@ import psycopg2
 import csv
 from datetime import datetime
 from pathlib import Path
-import json
 import re
 
 
@@ -38,9 +37,9 @@ class Database:
             self.cursor.execute(query)
         return self.cursor.fetchall()
     
-    # Creating a method that is able to only select the attribute 'full_name' from the players table
+  
     def get_all_player_names(self) -> list[str]:
-        query = "SELECT full_name FROM players;"  # or whatever your table/column is
+        query = "SELECT full_name FROM players;"  
         self.cursor.execute(query)
         results = self.cursor.fetchall()
         return [row[0] for row in results]
@@ -62,6 +61,7 @@ class Database:
 
     
     def get_players_by_name(self, name: str) -> list[dict]:
+        print("Searching for players with name:", name)
         self.cursor.execute(
             "SELECT * FROM players WHERE full_name ILIKE %(n)s",
             {"n": name},
@@ -75,14 +75,13 @@ class Database:
         ]
     
     def get_player_by_id(self, player_id: int) -> dict:
+        print("Searching for player with ID:", player_id)
         query = "SELECT * FROM players WHERE id = %s;"
         self.cursor.execute(query, (player_id,))
         result = self.cursor.fetchone()
         if result:
             columns = [desc[0] for desc in self.cursor.description]
             result = {col: convert_value(val) for col, val in zip(columns, result)}
-            for key, value in result.items():
-                print(f"{key}: {json.dumps(value, default=str, ensure_ascii=False)}")
             return result
         return {}
     
@@ -139,7 +138,7 @@ class Database:
                      pass  # Keep original if format is unexpected
                writer.writerow(row)
 
-        input_file = output_file  # Use the converted file for loading
+        input_file = output_file  
 
         # Drop existing table if exists and create a new one
         with open(self.basepath / "sql/init/init_players.sql", "r", encoding="utf-8") as f:
@@ -168,19 +167,13 @@ class Database:
         self.connection.commit()
         print("Database initialized and data loaded successfully.")
 
-        # Remove unnecessary properties
+        # Removes unnecessary properties
         with open(self.basepath / "sql/init/clean_data.sql", "r", encoding="utf-8") as f:
             clean_data_query = f.read()
             self.cursor.execute(clean_data_query)
             self.connection.commit()
             print("Unnecessary properties removed successfully.")
 
-        # with open(self.basepath / "sql/init/init_teams_table.sql", "r", encoding="utf-8") as f:
-        #     init_teams_query = f.read()
-        #     self.cursor.execute(init_teams_query)
-        #     self.connection.commit()
-        #     print("Teams table initialized successfully.")
-        #     print("Foreign key constraints added successfully.")
 
         with open(self.basepath / "sql/init/init_users.sql", "r", encoding="utf-8") as f:
             init_users_query = f.read()

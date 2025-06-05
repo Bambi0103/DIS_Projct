@@ -10,11 +10,6 @@ auth_bp = Blueprint("auth", __name__, template_folder="../../templates")
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    """
-    Very bare-bones login: user types *only* a username.
-    We consider any non-empty string a valid user and
-    rely on your db layer if you later want to check existence.
-    """
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")

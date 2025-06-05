@@ -1,11 +1,9 @@
 from flask import (
     Blueprint, current_app, render_template,
-    request, session, abort, jsonify, current_app, redirect, url_for
+    request, session, jsonify, current_app, redirect, url_for
 )
 from markupsafe import escape
-from difflib import get_close_matches
 import random
-import json
 from flask import redirect, url_for
 
 
@@ -14,7 +12,7 @@ search_bp = Blueprint(
     template_folder="../../templates"
 )
 
-# ---------------- helpers ---------------- #
+# Helper functions:
 @search_bp.before_app_request
 def init_session():
     """Load random target player into session."""
@@ -33,6 +31,7 @@ def _login_required():
 
 
 def _evaluate_guess(answer: dict, guess: dict) -> dict:
+    """Compare guess against answer and return results and diffs"""
     result = {}
     for key in answer:
         if key.lower() == "id":
@@ -50,19 +49,17 @@ def _evaluate_guess(answer: dict, guess: dict) -> dict:
             result[key] = {
                 "match": val_answer == val_guess
             }
-    if current_app.config["DEBUG_LEVEL"] > 0:
-        return {
-            "guess": guess,
-            "answer": answer,
-            "results": result
-        }
-    return result
+    return {
+        "guess": guess,
+        "answer": answer,
+        "results": result
+    }
 
 def is_guess_correct(guess: dict, target: dict) -> bool:
     return guess == target
 
 
-# ---------------- routes ----------------- #
+# Route handlers: 
 @search_bp.route("/game")
 def guess():
     logincheck = _login_required()
@@ -70,6 +67,7 @@ def guess():
         return logincheck
 
     # Choose random 
+    print("Getting players")
     players = current_app.db.get_all_player_ids()
     target = random.choice(players)
     session["target_player_id"] = target["id"]
@@ -117,7 +115,7 @@ def make_guess():
     if not guess_rows:
         return jsonify({"error": "Player not found"}), 404
 
-    guess_row = guess_rows[0] # This is slightly ugly, can later be changed so only one player is returned
+    guess_row = guess_rows[0] 
     target_id = session.get("target_player_id")
     if not target_id:
         return jsonify({"error": "No target player set"}), 400

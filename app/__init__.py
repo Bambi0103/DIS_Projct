@@ -1,7 +1,7 @@
 from flask import Flask, session, redirect, url_for
 from .blueprints.auth import auth_bp
 from .blueprints.search import search_bp
-from .database import Database  # Your existing DB wrapper
+from .database import Database  
 
 def create_app(db_user: str, 
                db_pass: str, 

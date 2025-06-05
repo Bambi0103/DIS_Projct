@@ -12,7 +12,7 @@
       {% if msgs %}
         <ul class="flashes">
           {% for cat, msg in msgs %}
-            <li class="flash {{ cat }}">{{ msg }}</li>
+            <li class="flash {{ cat }}" style="color: red;">{{ msg }}</li>
           {% endfor %}
         </ul>
       {% endif %}

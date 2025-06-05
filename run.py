@@ -1,4 +1,3 @@
-# run.py
 import argparse
 from app import create_app
 

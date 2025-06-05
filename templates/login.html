@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-center">Sign in</h2>
+<h2 class="text-center" style="color: white;">Sign in</h2>
 
 <form method="post" class="login-form">
-    <input name="username"  placeholder="Username"  autofocus required />
-    <input name="password"  type="password" placeholder="Password" required />
+    <input name="username"  placeholder="Username"  autofocus required style="color: black; background-color: white;" />
+    <input name="password"  type="password" placeholder="Password" required style="color: black; background-color: white;" />
 
-    <button type="submit" name="action" value="login">Login</button>
-    <button type="submit" name="action" value="register">Register</button>
+    <button type="submit" name="action" value="login" style="color: black;">Login</button>
+    <button type="submit" name="action" value="register" style="color: black;">Register</button>
 </form>
 {% endblock %}
