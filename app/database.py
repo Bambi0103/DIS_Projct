@@ -66,6 +66,31 @@ class Database:
             columns = [desc[0] for desc in self.cursor.description]
             return dict(zip(columns, result))
         return {}
+    
+    def user_exists(self, username: str) -> bool:
+        self.cursor.execute("SELECT 1 FROM users WHERE username = %s", (username,))
+        return self.cursor.fetchone() is not None 
+    
+    def add_user(self, username: str, password: str) -> None:
+        """Password saved as plaintext - not secure, obviously"""
+        self.cursor.execute("""
+                            INSERT INTO users (username, password)
+                            VALUES (%s, %s)
+                            ON CONFLICT (username) DO NOTHING""",
+                            (username, password)
+                            )
+        self.connection.commit()
+
+    def get_user(self, username: str) -> dict | None:
+        """Return user if exists, else return None"""
+        self.cursor.execute("SELECT * FROM users WHERE username = %s", (username,)) # Comma to make one-element tuple :/
+        row = self.cursor.fetchone()
+        if row is not None:
+            descriptions = self.cursor.description
+            return {desc[0]: row[i] for i, desc in enumerate(descriptions)}
+        return None
+        
+        
 
     def init_db(self):
         # Convert birth_date in CSV from mm/dd/yyyy to yyyy-mm-dd
@@ -73,6 +98,8 @@ class Database:
         source_file = source_file.resolve()
         output_file = self.basepath / "../data/players_converted.csv"
         output_file = output_file.resolve()
+
+        self.cursor.execute("DROP TABLE IF EXISTS users;")
 
         with open(source_file, 'r', newline='', encoding='utf-8') as infile, \
             open(output_file, 'w', newline='', encoding='utf-8') as outfile:

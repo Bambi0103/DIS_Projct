@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, session, redirect, url_for
 from .blueprints.auth import auth_bp
 from .blueprints.search import search_bp
 from .database import Database  # Your existing DB wrapper
@@ -38,6 +38,13 @@ def create_app(db_user: str,
     @app.route("/ping")
     def _ping():
         return {"status": "ok"}
+    
+    @app.route("/")
+    def index():
+        if "username" in session:
+            print(f"User {session['username']} is authenticated.")
+            return redirect(url_for("search.guess"))
+        return redirect(url_for("auth.login"))
 
     return app
 

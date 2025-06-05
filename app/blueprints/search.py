@@ -1,11 +1,12 @@
 from flask import (
     Blueprint, current_app, render_template,
-    request, session, abort, jsonify, current_app
+    request, session, abort, jsonify, current_app, redirect, url_for
 )
 from markupsafe import escape
 from difflib import get_close_matches
 import random
 import json
+from flask import redirect, url_for
 
 
 search_bp = Blueprint(
@@ -28,7 +29,8 @@ def init_session():
 
 def _login_required():
     if "username" not in session:
-        abort(401)   # htmx will follow redirect; plain browsers get 401
+        # print("User not logged in, redirecting to login page.")
+        return redirect(url_for("auth.login"))
 
 # def _ensure_target_player() -> dict:
 #     """Get random target player from database if first guess, else"""
@@ -76,9 +78,11 @@ def is_guess_correct(guess: dict, target: dict) -> bool:
 
 
 # ---------------- routes ----------------- #
-@search_bp.route("/")
+@search_bp.route("/game")
 def guess():
-    # _login_required()
+    logincheck = _login_required()
+    if logincheck:
+        return logincheck
 
     # Choose random 
     players = current_app.db.get_all_player_ids()
@@ -90,7 +94,9 @@ def guess():
 
 @search_bp.get("/api/search")
 def player_search():
-    # _login_required()
+    logincheck = _login_required()
+    if logincheck:
+        return logincheck
 
     term = request.args.get("full_name", "").strip().lower()
     if not term or len(term) < 1:
@@ -114,7 +120,9 @@ def make_guess():
     Compare against target player
     Return JSON with results (true false) and numeric difference if applicable
     """
-    # _login_required()
+    logincheck = _login_required()
+    if logincheck:
+        return logincheck
 
     player_name = request.form.get("full_name", "").strip()
     if not player_name:
