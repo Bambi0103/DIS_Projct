@@ -3,7 +3,7 @@
 ## Initial Setup
 Below works as of 05/06/2025 with (but not exclusively) Python version 3.12 
 - Initialise a Python virtual environment (recommended) by running `python -m venv venv` (Windows) or `python3 -m venv venv` on Unix-based systems.
-- Activate the virtual environment by running `venv\Scripts\Activate.bat` in Windows, and `source /Scripts/activate` on Unix-based systems
+- Activate the virtual environment by running `venv\Scripts\activate.bat` in Windows, and `source /Scripts/activate` on Unix-based systems
 - Install required packages by running `pip install -r requirements.txt`. This might break in the future, as we have not specified which versions of the packages (nor Python) are required. 
 - Ensure that PostgreSQL is installed by running `psql --version`. Refer to [this website](https://www.postgresql.org/) for Windows and Linux, and to [this website](https://postgresapp.com/) on MacOS
 - Create the required database by running `psql -c "CREATE DATABASE guesstheplayerdb"`
