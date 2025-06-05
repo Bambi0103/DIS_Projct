@@ -2,6 +2,18 @@ import psycopg2
 import csv
 from datetime import datetime
 from pathlib import Path
+import json
+import re
+
+
+def convert_value(val):
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return val
+    
+USERNAME_REGEX = re.compile(r"^[a-zA-Z0-9_-]{3,20}$") # 3-20 characters, letters/digits/underscore/dash only
+PASSWORD_REGEX = re.compile(r"^(?=.*[^a-zA-Z0-9]).{5,}$") # at least 5 characters, at least one special character
 
 class Database:
     def __init__(self, user, password, dbname="guesstheplayerdb",  host="localhost", port="5432"):
@@ -47,7 +59,7 @@ class Database:
             columns = [desc[0] for desc in self.cursor.description]
             return dict(zip(columns, result))
         return {}
-    
+
     
     def get_players_by_name(self, name: str) -> list[dict]:
         self.cursor.execute(
@@ -56,7 +68,11 @@ class Database:
         )
         results = self.cursor.fetchall()
         columns = [desc[0] for desc in self.cursor.description]
-        return [dict(zip(columns, row)) for row in results]
+
+        return [
+            {col: convert_value(val) for col, val in zip(columns, row)}
+            for row in results
+        ]
     
     def get_player_by_id(self, player_id: int) -> dict:
         query = "SELECT * FROM players WHERE id = %s;"
@@ -64,7 +80,10 @@ class Database:
         result = self.cursor.fetchone()
         if result:
             columns = [desc[0] for desc in self.cursor.description]
-            return dict(zip(columns, result))
+            result = {col: convert_value(val) for col, val in zip(columns, result)}
+            for key, value in result.items():
+                print(f"{key}: {json.dumps(value, default=str, ensure_ascii=False)}")
+            return result
         return {}
     
     def user_exists(self, username: str) -> bool:
@@ -73,6 +92,10 @@ class Database:
     
     def add_user(self, username: str, password: str) -> None:
         """Password saved as plaintext - not secure, obviously"""
+        if not USERNAME_REGEX.fullmatch(username):
+            raise ValueError("Username 3-20 chars, letters/digits/underscore/dash only.")
+        if not PASSWORD_REGEX.fullmatch(password):
+            raise ValueError("Password must be at least 5 chars, with at least one special char.")
         self.cursor.execute("""
                             INSERT INTO users (username, password)
                             VALUES (%s, %s)
@@ -152,12 +175,12 @@ class Database:
             self.connection.commit()
             print("Unnecessary properties removed successfully.")
 
-        with open(self.basepath / "sql/init/init_teams_table.sql", "r", encoding="utf-8") as f:
-            init_teams_query = f.read()
-            self.cursor.execute(init_teams_query)
-            self.connection.commit()
-            print("Teams table initialized successfully.")
-            print("Foreign key constraints added successfully.")
+        # with open(self.basepath / "sql/init/init_teams_table.sql", "r", encoding="utf-8") as f:
+        #     init_teams_query = f.read()
+        #     self.cursor.execute(init_teams_query)
+        #     self.connection.commit()
+        #     print("Teams table initialized successfully.")
+        #     print("Foreign key constraints added successfully.")
 
         with open(self.basepath / "sql/init/init_users.sql", "r", encoding="utf-8") as f:
             init_users_query = f.read()

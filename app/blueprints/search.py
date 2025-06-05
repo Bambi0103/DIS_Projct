@@ -29,25 +29,14 @@ def init_session():
 
 def _login_required():
     if "username" not in session:
-        # print("User not logged in, redirecting to login page.")
         return redirect(url_for("auth.login"))
-
-# def _ensure_target_player() -> dict:
-#     """Get random target player from database if first guess, else"""
-#     if "target_player_id" not in session:
-#         target = current_app.db.get_random_player()  # type: ignore[attr-defined]
-#         # expected shape: {"id": 42, "full_name": "Lionel Messi", ...}
-#         session["target_player_id"] = target["id"]
-#         session["attempts"] = 0
-#     else:
-#         target = current_app.db.get_player_by_id(session["target_player_id"])  # type: ignore[attr-defined]
-
-#     return target
 
 
 def _evaluate_guess(answer: dict, guess: dict) -> dict:
     result = {}
     for key in answer:
+        if key.lower() == "id":
+            continue
         if key not in guess:
             continue
         val_answer = answer[key]
@@ -70,10 +59,6 @@ def _evaluate_guess(answer: dict, guess: dict) -> dict:
     return result
 
 def is_guess_correct(guess: dict, target: dict) -> bool:
-    """
-    Check if the guess matches the target player.
-    This is a simple equality check for all fields.
-    """
     return guess == target
 
 

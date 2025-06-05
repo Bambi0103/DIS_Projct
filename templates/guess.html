@@ -5,6 +5,37 @@
     <title>Guess the player</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+
+    <!----- NEW: lightweight styles for a coloured grid --->
+        <style>
+        /* ☐ Horizontal “rail” that can scroll if needed */
+        .result-grid{
+            display:flex;
+            flex-wrap:nowrap;         /* stay in a single row            */
+            overflow-x:auto;          /* add scrollbar when overflowing  */
+            gap:10px;
+            margin-top:20px;
+            padding-bottom:4px;       /* leave space for scrollbar track */
+        }
+
+        .result-cell{
+            flex:0 0 140px;           /* fixed-width tiles               */
+            padding:8px 6px;
+            border-radius:6px;
+            text-align:center;
+            font-weight:600;
+            color:#fff;
+            user-select:none;
+        }
+        .result-cell small{           /* tiny diff number                */
+            display:block;
+            font-size:0.75rem;
+            opacity:.85;
+            margin-top:2px;
+        }
+        .true  {background:#4caf50;}  /* green  */
+        .false {background:#e53935;}  /* red    */
+    </style>
 </head>
 <body>
 <header class="hero">
@@ -36,15 +67,17 @@
             hx-trigger="click"
             hx-target="#results">
         Guess
-    
+    </button>
 
     <datalist id="playerList"></datalist>
 
     <!--Where comparison results can be shown-->
-    <div id="results" style="background-color: #ffffff;"></div>
+    <div id="results"></div>
+
     <!--Below is GPT implementation for easily copying data for inspection-->
     <button type="button" onclick="copyResultsToClipboard()" style="margin-top:10px;">Copy Results</button>
     <script>
+        /* existing helper */
         function copyResultsToClipboard() {
             const resultsDiv = document.getElementById('results');
             if (resultsDiv) {
@@ -52,6 +85,50 @@
                 navigator.clipboard.writeText(text);
             }
         }
+
+        /* --- NEW: turn backend JSON into a coloured grid --- */
+        function renderGrid(data) {
+            const IGNORE = ['correct'];
+            const guess = data.guess || {};
+            const results = data.results || {};
+            let html = '<div class="result-grid">';
+            for (const [key, val] of Object.entries(results)) {
+            if (IGNORE.includes(key)) continue;
+
+            let cellClass = '';
+            let cellContent = '';
+            let guessValue = guess[key] !== undefined ? guess[key] : '';
+
+            if (typeof val === 'object' && val !== null && 'match' in val) {
+                cellClass = val.match ? 'true' : 'false';
+                // Show guess value always
+                cellContent = `<div><b>${key.replace(/_/g, ' ')}:</b> ${guessValue}</div>`;
+                // Show diff only if not matched and diff exists
+                if (!val.match && 'diff' in val) {
+                cellContent += `<small>Diff: ${val.diff}</small>`;
+                }
+            } else {
+                // Fallback for unexpected structure
+                cellContent = `<div><b>${key.replace(/_/g, ' ')}:</b> ${guessValue}</div>`;
+            }
+
+            html += `<div class="result-cell ${cellClass}">${cellContent}</div>`;
+            }
+            html += '</div>';
+            return html;
+        }
+
+        /* listen for htmx swaps into #results */
+        document.body.addEventListener('htmx:afterSwap', e=>{
+            if(e.detail.target.id !== 'results') return;
+            const raw = e.detail.target.innerText.trim();
+            try{
+                const data = JSON.parse(raw);
+                e.detail.target.innerHTML = renderGrid(data);
+            }catch(err){
+                // not JSON – let ordinary HTML/text pass through
+            }
+        });
     </script>
 </div>
 </body>
